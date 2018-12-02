@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="refresh">Atualizar</string>
+    <string name="add">Adicionar</string>
+    <string name="removeicon">removeIcon</string>
+</resources>
