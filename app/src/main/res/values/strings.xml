@@ -3,4 +3,5 @@
     <string name="refresh">Atualizar</string>
     <string name="add">Adicionar</string>
     <string name="removeicon">removeIcon</string>
+    <string name="weathericon">WeatherIcon</string>
 </resources>

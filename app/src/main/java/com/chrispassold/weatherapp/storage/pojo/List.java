@@ -8,9 +8,9 @@ import java.util.ArrayList;
  */
 public class List implements Serializable {
 
-    private Integer dt;
+    private Long dt;
     private Main main;
-    private java.util.List<Weather> weather = new ArrayList<Weather>();
+    private java.util.List<Weather> weather = new ArrayList<>();
     private Clouds clouds;
     private Wind wind;
     private Sys_ sys;
@@ -21,7 +21,7 @@ public class List implements Serializable {
      * @return
      * The dt
      */
-    public Integer getDt() {
+    public Long getDt() {
         return dt;
     }
 
@@ -30,7 +30,7 @@ public class List implements Serializable {
      * @param dt
      * The dt
      */
-    public void setDt(Integer dt) {
+    public void setDt(Long dt) {
         this.dt = dt;
     }
 

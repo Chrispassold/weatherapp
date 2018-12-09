@@ -12,8 +12,9 @@ public class OpenWeatherInterceptor implements Interceptor {
     @NonNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
-        HttpUrl url = chain.request().url().newBuilder().
-                addQueryParameter("APPID", OpenWeatherApiClient.OPEN_WEATHER_API_KEY)
+        HttpUrl url = chain.request().url().newBuilder()
+                .addQueryParameter("appid", OpenWeatherApiClient.OPEN_WEATHER_API_KEY)
+                .addQueryParameter("units", "metric")
                 .build();
 
         return chain.proceed(chain

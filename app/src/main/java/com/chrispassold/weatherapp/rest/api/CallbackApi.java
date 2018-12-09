@@ -4,6 +4,6 @@ public interface CallbackApi<T> {
 
     void onSuccess(T data);
 
-    void onFail(Throwable t);
+    void onFail(Throwable t, int code);
 
 }

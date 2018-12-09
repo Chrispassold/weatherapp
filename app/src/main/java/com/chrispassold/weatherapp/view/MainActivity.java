@@ -12,9 +12,12 @@ import android.widget.Toast;
 
 import com.chrispassold.weatherapp.R;
 import com.chrispassold.weatherapp.adapter.WeatherMainAdapter;
-import com.chrispassold.weatherapp.rest.loader.WeatherLoader;
+import com.chrispassold.weatherapp.storage.model.WeatherCityModel;
+import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,11 +25,14 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rvList;
     WeatherMainAdapter mAdapter;
 
+    ArrayList<WeatherCityModel> cities = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        refreshList();
     }
 
     private void init() {
@@ -37,19 +43,33 @@ public class MainActivity extends AppCompatActivity {
         setupList();
     }
 
+    private void refreshList() {
+        try {
+            Dao<WeatherCityModel, Long> dao = WeatherCityModel.getDao();
+            List<WeatherCityModel> weatherCityModels = dao.queryForAll();
+            mAdapter.updateList(weatherCityModels);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void openAddCity() {
         final AddCityDialog addCityDialog = new AddCityDialog(this);
+        addCityDialog.onAddNew(this::refreshList);
         addCityDialog.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshList();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    public void refreshList(){
-
     }
 
     @Override

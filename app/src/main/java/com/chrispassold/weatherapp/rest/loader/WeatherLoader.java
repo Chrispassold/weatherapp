@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.chrispassold.weatherapp.rest.api.CallbackApi;
 import com.chrispassold.weatherapp.rest.config.OpenWeatherApiClient;
-import com.chrispassold.weatherapp.storage.pojo.WeatherData;
+import com.chrispassold.weatherapp.storage.api.WeatherCityData;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -13,22 +13,22 @@ import retrofit2.Response;
 
 public class WeatherLoader {
 
-    public static void getByCity(@NonNull String city, CallbackApi<WeatherData> callbackApi) {
-        Call<WeatherData> weatherByCityName = OpenWeatherApiClient.getClient().getWeatherByCityName(city);
+    public static void getByCity(@NonNull String city, CallbackApi<WeatherCityData> callbackApi) {
+        Call<WeatherCityData> weatherByCityName = OpenWeatherApiClient.getClient().getForecastByCityName(city, 5);
 
-        weatherByCityName.enqueue(new Callback<WeatherData>() {
+        weatherByCityName.enqueue(new Callback<WeatherCityData>() {
             @Override
-            public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
+            public void onResponse(Call<WeatherCityData> call, Response<WeatherCityData> response) {
                 if (response.isSuccessful()) {
                     callbackApi.onSuccess(response.body());
                 } else {
-                    callbackApi.onFail(new HttpException(response));
+                    callbackApi.onFail(new HttpException(response), response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<WeatherData> call, Throwable t) {
-                callbackApi.onFail(t);
+            public void onFailure(Call<WeatherCityData> call, Throwable t) {
+                callbackApi.onFail(t, 500);
             }
         });
     }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Main implements Serializable {
 
+
     private Double temp;
     private Double tempMin;
     private Double tempMax;
@@ -11,7 +12,7 @@ public class Main implements Serializable {
     private Double seaLevel;
     private Double grndLevel;
     private Integer humidity;
-    private Integer tempKf;
+    private Double tempKf;
 
     /**
      *
@@ -139,22 +140,11 @@ public class Main implements Serializable {
         this.humidity = humidity;
     }
 
-    /**
-     *
-     * @return
-     * The tempKf
-     */
-    public Integer getTempKf() {
+    public Double getTempKf() {
         return tempKf;
     }
 
-    /**
-     *
-     * @param tempKf
-     * The temp_kf
-     */
-    public void setTempKf(Integer tempKf) {
+    public void setTempKf(Double tempKf) {
         this.tempKf = tempKf;
     }
-
 }

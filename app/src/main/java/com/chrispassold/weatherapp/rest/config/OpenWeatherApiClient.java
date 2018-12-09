@@ -1,6 +1,7 @@
 package com.chrispassold.weatherapp.rest.config;
 
 import com.chrispassold.weatherapp.rest.api.OpenWeatherApi;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,11 +28,12 @@ public class OpenWeatherApiClient {
 
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .create();
 
             retrofit = new Retrofit.Builder()
                     .client(client)
-                    .baseUrl("https://samples.openweathermap.org/data/")
+                    .baseUrl("https://api.openweathermap.org/data/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
