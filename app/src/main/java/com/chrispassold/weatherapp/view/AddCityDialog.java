@@ -14,7 +14,7 @@ import com.chrispassold.weatherapp.exception.WeatherException;
 import com.chrispassold.weatherapp.rest.api.CallbackApi;
 import com.chrispassold.weatherapp.rest.loader.WeatherLoader;
 import com.chrispassold.weatherapp.storage.api.WeatherCityData;
-import com.chrispassold.weatherapp.storage.control.WeatherControl;
+import com.chrispassold.weatherapp.storage.repository.WeatherRepository;
 import com.chrispassold.weatherapp.storage.model.WeatherCityModel;
 import com.j256.ormlite.dao.Dao;
 
@@ -25,13 +25,13 @@ class AddCityDialog extends AlertDialog.Builder {
 
     final AppCompatEditText view;
     Runnable onAddNew;
-    final WeatherControl control;
+    final WeatherRepository repository;
 
     AddCityDialog(@NonNull Context context) {
         super(context);
         setTitle("Adicionar cidade");
 
-        control = new WeatherControl();
+        repository = new WeatherRepository();
         view = getView();
 
         setView(view);
@@ -56,13 +56,9 @@ class AddCityDialog extends AlertDialog.Builder {
         final AlertDialog show = super.show();
 
         show.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            final Dao<WeatherCityModel, Long> dao;
             try {
-                dao = WeatherCityModel.getDao();
 
-                List<WeatherCityModel> weatherCityModels = dao.queryForEq(WeatherCityModel.F_CITY, getCity());
-
-                if (weatherCityModels.size() > 0) {
+                if (repository.existsCity(getCity())) {
                     throw new CityAlreadyExistsException();
                 }
 
@@ -75,13 +71,11 @@ class AddCityDialog extends AlertDialog.Builder {
                                 throw new CityNotFoundException();
                             }
 
-                            List<WeatherCityModel> weatherCityModels = dao.queryForEq(WeatherCityModel.F_CITY_ID, data.getCity().getId());
-
-                            if (weatherCityModels.size() > 0) {
+                            if (repository.existsCity(data.getCity().getId())) {
                                 throw new CityAlreadyExistsException();
                             }
 
-                            control.create(data);
+                            repository.create(data);
 
                             if (onAddNew != null)
                                 onAddNew.run();

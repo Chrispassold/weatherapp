@@ -4,9 +4,11 @@ import com.chrispassold.weatherapp.storage.database.DatabaseHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
 
 @DatabaseTable(tableName = "weather_city")
@@ -35,6 +37,9 @@ public class WeatherCityModel {
 
     @DatabaseField(columnName = F_LAST_UPDATE, dataType = DataType.DATE_LONG)
     private Date lastUpdate;
+
+    @ForeignCollectionField(eager = true)
+    private Collection<WeatherCityDaysModel> days;
 
 //    @DatabaseField(canBeNull = true, foreign = true)
 //    private WeatherCityDaysModel weatherDays;i
@@ -66,6 +71,14 @@ public class WeatherCityModel {
 
     public String getCity() {
         return city;
+    }
+
+    public Collection<WeatherCityDaysModel> getDays() {
+        return days;
+    }
+
+    public void setDays(Collection<WeatherCityDaysModel> days) {
+        this.days = days;
     }
 
     public static Dao<WeatherCityModel, Long> getDao() throws SQLException {

@@ -12,7 +12,10 @@ import android.widget.Toast;
 
 import com.chrispassold.weatherapp.R;
 import com.chrispassold.weatherapp.adapter.WeatherMainAdapter;
+import com.chrispassold.weatherapp.rest.api.Callback;
 import com.chrispassold.weatherapp.storage.model.WeatherCityModel;
+import com.chrispassold.weatherapp.storage.repository.WeatherRepository;
+import com.chrispassold.weatherapp.util.Util;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
@@ -24,13 +27,14 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     RecyclerView rvList;
     WeatherMainAdapter mAdapter;
-
+    WeatherRepository repository;
     ArrayList<WeatherCityModel> cities = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        repository = new WeatherRepository();
         init();
         refreshList();
     }
@@ -45,9 +49,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshList() {
         try {
-            Dao<WeatherCityModel, Long> dao = WeatherCityModel.getDao();
-            List<WeatherCityModel> weatherCityModels = dao.queryForAll();
-            mAdapter.updateList(weatherCityModels);
+
+            if (!Util.isNetworkAvailable()) {
+                Dao<WeatherCityModel, Long> dao = WeatherCityModel.getDao();
+                List<WeatherCityModel> weatherCityModels = dao.queryForAll();
+                mAdapter.updateList(weatherCityModels);
+                return;
+            }
+
+            repository.refreshCities(new Callback() {
+                @Override
+                public void onSuccess() {
+                    try {
+                        Dao<WeatherCityModel, Long> dao = WeatherCityModel.getDao();
+                        List<WeatherCityModel> weatherCityModels = dao.queryForAll();
+                        mAdapter.updateList(weatherCityModels);
+                    } catch (SQLException e) {
+                        onFail(e);
+                    }
+                }
+
+                @Override
+                public void onFail(Throwable t) {
+                    Toast.makeText(MainActivity.this, "Ocorreu um erro", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -60,11 +87,6 @@ public class MainActivity extends AppCompatActivity {
         addCityDialog.show();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refreshList();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 openAddCity();
                 return true;
             case R.id.refresh:
-                Toast.makeText(this, "refresh", Toast.LENGTH_LONG).show();
+                refreshList();
                 return true;
         }
 

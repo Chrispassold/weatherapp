@@ -24,7 +24,7 @@ public class WeatherCityDaysModel {
     @DatabaseField(index = true, unique = true, generatedId = true)
     private Long id;
 
-    @DatabaseField(canBeNull = false, foreign = true, columnName = F_CITY)
+    @DatabaseField(canBeNull = false, foreignAutoRefresh = true, foreign = true, columnName = F_CITY)
     private WeatherCityModel city;
 
     @DatabaseField(columnName = F_DATE, canBeNull = false, dataType = DataType.DATE_LONG)

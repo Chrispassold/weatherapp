@@ -8,7 +8,7 @@ import retrofit2.http.Query;
 
 public interface OpenWeatherApi {
     @GET("2.5/forecast")
-    Call<WeatherCityData> getWeatherById(@Query("id") long id, @Query("cnt") int qtd);
+    Call<WeatherCityData> getForecastById(@Query("id") long id, @Query("cnt") int qtd);
 
     @GET("2.5/forecast")
     Call<WeatherCityData> getForecastByCityName(@Query("q") String cityName, @Query("cnt") int qtd);

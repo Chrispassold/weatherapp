@@ -9,18 +9,24 @@ import com.bumptech.glide.Glide;
 import com.chrispassold.weatherapp.R;
 import com.chrispassold.weatherapp.WeatherAppApplication;
 import com.chrispassold.weatherapp.adapter.holder.WeatherMainHolder;
+import com.chrispassold.weatherapp.storage.model.WeatherCityDaysModel;
 import com.chrispassold.weatherapp.storage.model.WeatherCityModel;
+import com.chrispassold.weatherapp.storage.repository.WeatherRepository;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 public class WeatherMainAdapter extends RecyclerView.Adapter<WeatherMainHolder> {
 
     private final List<WeatherCityModel> mWeatherList;
+    private final WeatherRepository repository;
 
     public WeatherMainAdapter(ArrayList<WeatherCityModel> weatherList) {
         mWeatherList = weatherList;
+        repository = new WeatherRepository();
     }
 
     @NonNull
@@ -32,11 +38,17 @@ public class WeatherMainAdapter extends RecyclerView.Adapter<WeatherMainHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull WeatherMainHolder holder, int position) {
+        WeatherCityModel weather = mWeatherList.get(position);
         holder.getTitle().setText(String.format(Locale.getDefault(), "%s",
-                mWeatherList.get(position).getCity()
+                weather.getCity()
         ));
 
-        Glide.with(WeatherAppApplication.getContext()).load("http://openweathermap.org/img/w/09d.png").into(holder.getWeatherIcon());
+        try {
+            WeatherCityDaysModel weatherDays = repository.getCurrentWeatherDays(weather);
+            Glide.with(WeatherAppApplication.getContext()).load(String.format("http://openweathermap.org/img/w/%s.png", weatherDays.getIcon())).into(holder.getWeatherIcon());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
