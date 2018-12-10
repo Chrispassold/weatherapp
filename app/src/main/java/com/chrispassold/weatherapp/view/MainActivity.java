@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.chrispassold.weatherapp.R;
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     RecyclerView rvList;
+    ProgressBar progressBar;
+
     WeatherMainAdapter mAdapter;
     WeatherRepository repository;
     ArrayList<WeatherCityModel> cities = new ArrayList<>();
@@ -45,15 +49,34 @@ public class MainActivity extends AppCompatActivity {
 
         rvList = findViewById(R.id.rv_main);
         setupList();
+
+        progressBar = findViewById(R.id.progressBar);
+    }
+
+    private void showLoading() {
+        runOnUiThread(() -> {
+            rvList.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        });
+    }
+
+    private void hideLoading() {
+        runOnUiThread(() -> {
+            progressBar.setVisibility(View.GONE);
+            rvList.setVisibility(View.VISIBLE);
+        });
     }
 
     private void refreshList() {
         try {
 
+            showLoading();
+
             if (!Util.isNetworkAvailable()) {
                 Dao<WeatherCityModel, Long> dao = WeatherCityModel.getDao();
                 List<WeatherCityModel> weatherCityModels = dao.queryForAll();
                 mAdapter.updateList(weatherCityModels);
+                hideLoading();
                 return;
             }
 
@@ -66,11 +89,14 @@ public class MainActivity extends AppCompatActivity {
                         mAdapter.updateList(weatherCityModels);
                     } catch (SQLException e) {
                         onFail(e);
+                    }finally {
+                        hideLoading();
                     }
                 }
 
                 @Override
                 public void onFail(Throwable t) {
+                    hideLoading();
                     Toast.makeText(MainActivity.this, "Ocorreu um erro", Toast.LENGTH_SHORT).show();
                 }
             });

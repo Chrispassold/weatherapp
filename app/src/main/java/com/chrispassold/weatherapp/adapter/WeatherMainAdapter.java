@@ -63,9 +63,8 @@ public class WeatherMainAdapter extends RecyclerView.Adapter<WeatherMainHolder> 
      */
     public void updateList(List<WeatherCityModel> weather) {
         mWeatherList.clear();
-        for (WeatherCityModel weatherCityModel : weather) {
-            insertItem(weatherCityModel);
-        }
+        mWeatherList.addAll(weather);
+        notifyDataSetChanged();
     }
 
     // Método responsável por inserir um novo item na lista
